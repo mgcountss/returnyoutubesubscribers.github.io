@@ -27,25 +27,24 @@ function stats() {
         getCount()
         async function getCount() {
             await fetch('https://backend.mgcounts.com/' + cid + '')
-                .then(response => response.json()).catch(err => {
-                    console.log(err)
-                    console.log('https://backend.mgcounts.com/' + cid + '')
-                }).then(data => {
-                    console.log(data)
+                .then(response => response.json())
+                .then(data => {
                     if (data) {
                         if (data.success == true) {
-                            document.querySelector("#subscriber-count").innerHTML = data.count.toLocaleString() + " subscribers"
-                            document.querySelector("#subscriber-count").setAttribute("loaded", "true")
-                        } else if (data.count == false) {
+                            if (data.verified == true) {
+                                document.querySelector("#subscriber-count").innerHTML = parseFloat(data.count.split('<br>')[0]).toLocaleString() + " subscribers<br>" + data.count.split('<br>')[1]
+                                document.querySelector("#subscriber-count").setAttribute("loaded", "true")
+                            } else {
+                                document.querySelector("#subscriber-count").innerHTML = data.count.toLocaleString() + " subscribers"
+                                document.querySelector("#subscriber-count").setAttribute("loaded", "true")
+                            }
+                        } else if (data.count == null) {
                             document.querySelector("#subscriber-count").innerHTML = res.split(`,"subscriberCountText":{"accessibility":{"accessibilityData":{"label":"`)[1].split(' subscribers')[0] + " subscribers"
                             document.querySelector("#subscriber-count").setAttribute("loaded", "true")
-                        } else {
-                            alert('error')
                         }
                     }
                 }).catch(err => {
                     console.log(err)
-                    console.log('https://backend.mgcounts.com/' + cid + '')
                 })
         }
     }
@@ -63,20 +62,23 @@ function stats2() {
             await fetch('https://backend.mgcounts.com/' + cid + '')
                 .then(response => response.json()).catch(err => {
                     console.log(err)
-                    console.log('https://backend.mgcounts.com/' + cid + '')
                 }).then(data => {
-                    console.log(data)
                     if (data) {
-                        if (data.success == true) {
-                            document.querySelector("#owner-sub-count").innerHTML = data.count.toLocaleString() + " subscribers"
+                        if (data.count == null) {
+                            document.querySelector("#owner-sub-count").innerHTML = "failed to load subscriber count"
                             document.querySelector("#owner-sub-count").setAttribute("loaded", "true")
-                        } else if (data.success == false) {
-                            location.reload()
+                        } else {
+                            if (data.verified == true) {
+                                document.querySelector("#owner-sub-count").innerHTML = parseFloat(data.count.split('<br>')[0]).toLocaleString() + " subscribers<br>" + data.count.split('<br>')[1]
+                                document.querySelector("#owner-sub-count").setAttribute("loaded", "true")
+                            } else {
+                                document.querySelector("#owner-sub-count").innerHTML = data.count.toLocaleString() + " subscribers"
+                                document.querySelector("#owner-sub-count").setAttribute("loaded", "true")
+                            }
                         }
                     }
                 }).catch(err => {
                     console.log(err)
-                    console.log('https://backend.mgcounts.com/' + cid + '')
                 })
         }
     }

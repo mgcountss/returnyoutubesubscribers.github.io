@@ -2,7 +2,7 @@
     "name": "Return YouTube Subscribers",
     "description": "Fixes YouTube's Subscriber Counts On Channel/Video Pages.",
     "manifest_version": 3,
-    "version": "2.1",
+    "version": "2.3",
     "icons": {
         "16": "icon.png",
         "32": "icon.png",

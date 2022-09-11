@@ -18,7 +18,6 @@ function check() {
 }
 
 function stats() {
-    console.log('stats')
     var req = new XMLHttpRequest();
     req.open('GET', currentURL, false);
     req.send(null);
@@ -27,16 +26,18 @@ function stats() {
         cid = res.split(`,{"key":"browse_id","value":"`)[1].split(`"},`)[0]
         getCount()
         async function getCount() {
-            console.log('k')
             await fetch('https://backend.mgcounts.com/' + cid + '')
                 .then(response => response.json())
                 .then(data => {
-                    console.log('e')
-                    console.log(data)
                     if (data) {
                         if (data.success == true) {
-                            document.querySelector("#subscriber-count").innerHTML = parseFloat(data.count.split(' subscribers')[0]).toLocaleString() +" subscribers"+ data.count.split(' subscribers')[1]
-                            document.querySelector("#subscriber-count").setAttribute("loaded", "true")
+                            if (data.verified == true) {
+                                document.querySelector("#subscriber-count").innerHTML = parseFloat(data.count.split('<br>')[0]).toLocaleString() + " subscribers<br>" + data.count.split('<br>')[1]
+                                document.querySelector("#subscriber-count").setAttribute("loaded", "true")
+                            } else {
+                                document.querySelector("#subscriber-count").innerHTML = data.count.toLocaleString() + " subscribers"
+                                document.querySelector("#subscriber-count").setAttribute("loaded", "true")
+                            }
                         } else if (data.count == null) {
                             document.querySelector("#subscriber-count").innerHTML = res.split(`,"subscriberCountText":{"accessibility":{"accessibilityData":{"label":"`)[1].split(' subscribers')[0] + " subscribers"
                             document.querySelector("#subscriber-count").setAttribute("loaded", "true")
@@ -50,7 +51,6 @@ function stats() {
 }
 
 function stats2() {
-    console.log('stats2')
     var req = new XMLHttpRequest();
     req.open('GET', currentURL, false);
     req.send(null);
@@ -63,18 +63,22 @@ function stats2() {
                 .then(response => response.json()).catch(err => {
                     console.log(err)
                 }).then(data => {
-                    console.log(data)
                     if (data) {
-                        if (data.success == true) {
-                            document.querySelector("#owner-sub-count").innerHTML = parseFloat(data.count.split(' subscribers')[0]).toLocaleString() +" subscribers"+ data.count.split(' subscribers')[1]
+                        if (data.count == null) {
+                            document.querySelector("#owner-sub-count").innerHTML = "failed to load subscriber count"
                             document.querySelector("#owner-sub-count").setAttribute("loaded", "true")
-                        } else if (data.success == false) {
-                            location.reload()
+                        } else {
+                            if (data.verified == true) {
+                                document.querySelector("#owner-sub-count").innerHTML = parseFloat(data.count.split('<br>')[0]).toLocaleString() + " subscribers<br>" + data.count.split('<br>')[1]
+                                document.querySelector("#owner-sub-count").setAttribute("loaded", "true")
+                            } else {
+                                document.querySelector("#owner-sub-count").innerHTML = data.count.toLocaleString() + " subscribers"
+                                document.querySelector("#owner-sub-count").setAttribute("loaded", "true")
+                            }
                         }
                     }
                 }).catch(err => {
                     console.log(err)
-                    console.log('https://backend.mgcounts.com/' + cid + '')
                 })
         }
     }
