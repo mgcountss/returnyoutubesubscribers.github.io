@@ -31,6 +31,9 @@ function stats() {
                 .then(data => {
                     if (data) {
                         if (data.success == true) {
+                            if (document.querySelector("#subscriber-count").getAttribute('is-empty') == "") {
+                                document.querySelector("#subscriber-count").removeAttribute('is-empty')
+                            }
                             if (data.verified == true) {
                                 document.querySelector("#subscriber-count").innerHTML = parseFloat(data.count.split('<br>')[0]).toLocaleString() + " subscribers<br>" + data.count.split('<br>')[1]
                                 document.querySelector("#subscriber-count").setAttribute("loaded", "true")
@@ -75,6 +78,9 @@ function stats2() {
                                 document.querySelector("#owner-sub-count").innerHTML = data.count.toLocaleString() + " subscribers"
                                 document.querySelector("#owner-sub-count").setAttribute("loaded", "true")
                             }
+                            if (document.querySelector("#owner-sub-count").getAttribute('is-empty') == "") {
+                                document.querySelector("#owner-sub-count").removeAttribute('is-empty')
+                            }
                         }
                     }
                 }).catch(err => {
@@ -87,11 +93,17 @@ function stats2() {
 setInterval(function () {
     const url = window.location.href
     if ((currentURL == window.location.href) == false) {
+        console.log('url changed')
         if (url.includes("/channel/") || url.includes("/c/") || url.includes("/user/") || url.includes("/watch?v=")) {
-            if (url.includes("/channel/") || url.includes("/c/") || url.includes("/user/") || url.includes("/watch?v=")) currentURL = window.location.href;
+            if (url.includes("/channel/") || url.includes("/c/") || url.includes("/user/") || url.includes("/watch?v=")) {
+                currentURL = window.location.href;
+            }
             if (url.includes("/watch?v=")) {
                 stats2()
             } else if (url.includes("/channel/") || url.includes("/c/") || url.includes("/user/")) {
+                if (document.querySelector("#subscriber-count").getAttribute('is-empty') == "") {
+                    document.querySelector("#subscriber-count").removeAttribute('is-empty')
+                }
                 if (document.getElementById('edit-buttons').childElementCount == 2) {
                     stats()
                 } else {

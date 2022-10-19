@@ -11,11 +11,13 @@ app.get('/:id', (req, res) => {
                 .then(response => {
                     if (response.data.success == false) {
                         next()
+                        console.log('next')
                     } else {
                         res.status(200).send({ "success": true, "count": response.data.subs + "<br><a style='color: #FFF;' href='https://unabbreviate.nextcounts.com/'>Verified by NextCounts</a>", "verified": true });
                     }
                 }).catch(err => {
                     next()
+                    console.log('next')
                 })
         } else {
             res.send({ "success": false, "count": null, "verified": false, "msg": "invalid channel id" })
@@ -28,19 +30,23 @@ app.get('/:id', (req, res) => {
             .then(response => {
                 res.status(200).send({ "success": true, "count": response.data.counts[0], "verified": false });
             }).catch(err => {
+                console.log('next')
                 axios.get(process.env.lcapi + "" + req.params.id)
                     .then(response => {
                         res.status(200).send({ "success": true, "count": response.data.counts[0].count, "verified": false });
                     }).catch(err => {
-                        axios.get(process.env.mgapi + "" + req.params.id)
+                        axios.get(process.env.mxapi + "" + req.params.id)
                             .then(response => {
-                                res.status(200).send({ "success": true, "count": response.data.stats[0].value, "verified": false });
+                                res.status(200).send({ "success": true, "count": response.data.counts[0].count, "verified": false });
                             }).catch(err => {
-                                res.status(200).send({ "success": false, "count": null, "verified": false, "msg": "known channel" })
+                                res.status(200).send({ "success": false, "count": null, "verified": false, "msg": "unknown channel" })
                             })
                     })
             })
     }
 })
+
+//api route:
+//https://backend.mgcounts.com/${channelid}
 
 app.listen(3333);
