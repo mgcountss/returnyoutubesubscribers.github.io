@@ -27,6 +27,7 @@ function stats() {
         getCount()
         async function getCount() {
             await fetch('https://backend.mgcounts.com/' + cid + '')
+            //await fetch('http://localhost:3333/' + cid + '')
                 .then(response => response.json())
                 .then(data => {
                     if (data) {
@@ -35,7 +36,7 @@ function stats() {
                                 document.querySelector("#subscriber-count").removeAttribute('is-empty')
                             }
                             if (data.verified == true) {
-                                document.querySelector("#subscriber-count").innerHTML = parseFloat(data.count.split('<br>')[0]).toLocaleString() + " subscribers<br>" + data.count.split('<br>')[1]
+                                document.querySelector("#subscriber-count").innerHTML = data.count.toLocaleString() + " subscribers <a style='color: #AAA;' href='https://nextcounts.com/unabbreviate/'>(Verified by NextCounts)</a>"
                                 document.querySelector("#subscriber-count").setAttribute("loaded", "true")
                             } else {
                                 document.querySelector("#subscriber-count").innerHTML = data.count.toLocaleString() + " subscribers"
@@ -63,6 +64,7 @@ function stats2() {
         getCount()
         async function getCount() {
             await fetch('https://backend.mgcounts.com/' + cid + '')
+            //await fetch('http://localhost:3333/' + cid + '')
                 .then(response => response.json()).catch(err => {
                     console.log(err)
                 }).then(data => {
@@ -72,7 +74,7 @@ function stats2() {
                             document.querySelector("#owner-sub-count").setAttribute("loaded", "true")
                         } else {
                             if (data.verified == true) {
-                                document.querySelector("#owner-sub-count").innerHTML = parseFloat(data.count.split('<br>')[0]).toLocaleString() + " subscribers<br>" + data.count.split('<br>')[1]
+                                document.querySelector("#owner-sub-count").innerHTML = data.count.toLocaleString() + " subscribers <a style='color: #AAA;' href='https://nextcounts.com/unabbreviate/'>(Verified by NextCounts)</a>"
                                 document.querySelector("#owner-sub-count").setAttribute("loaded", "true")
                             } else {
                                 document.querySelector("#owner-sub-count").innerHTML = data.count.toLocaleString() + " subscribers"
@@ -93,22 +95,30 @@ function stats2() {
 setInterval(function () {
     const url = window.location.href
     if ((currentURL == window.location.href) == false) {
-        console.log('url changed')
-        if (url.includes("/channel/") || url.includes("/c/") || url.includes("/user/") || url.includes("/watch?v=")) {
-            if (url.includes("/channel/") || url.includes("/c/") || url.includes("/user/") || url.includes("/watch?v=")) {
+        if (url.includes("/channel/") || url.includes("/c/") || url.includes("/user/") || url.includes("/watch?v=") || url.includes("/@")) {
+            if (url.includes("/channel/") || url.includes("/c/") || url.includes("/user/") || url.includes("/watch?v=") || url.includes("/@")) {
                 currentURL = window.location.href;
             }
             if (url.includes("/watch?v=")) {
                 stats2()
-            } else if (url.includes("/channel/") || url.includes("/c/") || url.includes("/user/")) {
-                if (document.querySelector("#subscriber-count").getAttribute('is-empty') == "") {
-                    document.querySelector("#subscriber-count").removeAttribute('is-empty')
+            } else if (url.includes("/channel/") || url.includes("/c/") || url.includes("/user/") || url.includes("/@")) {
+                function thing() {
+                    if (document.querySelector("#subscriber-count")) {
+                        if (document.querySelector("#subscriber-count").getAttribute('is-empty') == "") {
+                            document.querySelector("#subscriber-count").removeAttribute('is-empty')
+                        }
+                        if (document.getElementById('edit-buttons').childElementCount == 2) {
+                            stats()
+                        } else {
+                            stats()
+                        }
+                    } else {
+                        setTimeout(function () {
+                            thing()
+                        }, 500)
+                    }
                 }
-                if (document.getElementById('edit-buttons').childElementCount == 2) {
-                    stats()
-                } else {
-                    stats()
-                }
+                thing()
             }
         }
     }

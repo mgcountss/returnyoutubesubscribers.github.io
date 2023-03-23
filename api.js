@@ -13,7 +13,7 @@ app.get('/:id', (req, res) => {
                         next()
                         console.log('next')
                     } else {
-                        res.status(200).send({ "success": true, "count": response.data.subs + "<br><a style='color: #FFF;' href='https://unabbreviate.nextcounts.com/'>Verified by NextCounts</a>", "verified": true });
+                        res.status(200).send({ "success": true, "count": response.data.subs, "verified": true });
                     }
                 }).catch(err => {
                     next()
@@ -45,8 +45,5 @@ app.get('/:id', (req, res) => {
             })
     }
 })
-
-//api route:
-//https://backend.mgcounts.com/${channelid}
 
 app.listen(3333);
