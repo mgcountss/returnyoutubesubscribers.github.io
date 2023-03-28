@@ -1,8 +1,14 @@
-const app = require('express')()
+var express = require('express')
+var app = express()
+const cors = require('cors')
+const fetch = require('node-fetch')
 const axios = require('axios');
-const cors = require('cors');
-require('dotenv').config();
-app.use(cors());
+app.use(cors())
+
+app.get('/', function (req, res) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.send("ok")
+})
 
 app.get('/:id', (req, res) => {
     if (req.params.id.length == 24) {
@@ -11,13 +17,13 @@ app.get('/:id', (req, res) => {
                 .then(response => {
                     if (response.data.success == false) {
                         next()
-                        console.log('next')
+                        console.log('next nc to xyz')
                     } else {
                         res.status(200).send({ "success": true, "count": response.data.subs, "verified": true });
                     }
                 }).catch(err => {
                     next()
-                    console.log('next')
+                    console.log('next nc to xyz')
                 })
         } else {
             res.send({ "success": false, "count": null, "verified": false, "msg": "invalid channel id" })
@@ -28,22 +34,26 @@ app.get('/:id', (req, res) => {
     function next() {
         axios.get(process.env.lcapi + "" + req.params.id)
             .then(response => {
-                res.status(200).send({ "success": true, "count": response.data.counts[0], "verified": false });
+                if (response.data.counts[0] == null) {
+                    console.log('next xyz to mx')
+                    next2()
+                } else {
+                    res.status(200).send({ "success": true, "count": response.data.counts[0], "verified": false });
+                }
             }).catch(err => {
-                console.log('next')
-                axios.get(process.env.lcapi + "" + req.params.id)
-                    .then(response => {
-                        res.status(200).send({ "success": true, "count": response.data.counts[0].count, "verified": false });
-                    }).catch(err => {
-                        axios.get(process.env.mxapi + "" + req.params.id)
-                            .then(response => {
-                                res.status(200).send({ "success": true, "count": response.data.counts[0].count, "verified": false });
-                            }).catch(err => {
-                                res.status(200).send({ "success": false, "count": null, "verified": false, "msg": "unknown channel" })
-                            })
-                    })
+                console.log('next xyz to mx')
+                next2()
+            })
+    }
+    function next2() {
+        axios.get(process.env.mxapi + "" + req.params.id)
+            .then(response => {
+                res.status(200).send({ "success": true, "count": response.data.counts[0].count, "verified": false });
+            }).catch(err => {
+              console.log('failed all', req.params.id)
+                res.status(200).send({ "success": false, "count": null, "verified": false, "msg": "unknown channel" })
             })
     }
 })
 
-app.listen(3333);
+app.listen(process.env.port || 80)
