@@ -27,7 +27,6 @@ function stats() {
         getCount()
         async function getCount() {
             await fetch('https://api.mgcounts.com/' + cid + '')
-            //await fetch('http://localhost:3333/' + cid + '')
                 .then(response => response.json())
                 .then(data => {
                     if (data) {
@@ -64,7 +63,6 @@ function stats2() {
         getCount()
         async function getCount() {
             await fetch('https://api.mgcounts.com/' + cid + '')
-            //await fetch('http://localhost:3333/' + cid + '')
                 .then(response => response.json()).catch(err => {
                     console.log(err)
                 }).then(data => {
