@@ -26,7 +26,7 @@ function stats() {
         cid = res.split(`,{"key":"browse_id","value":"`)[1].split(`"},`)[0]
         getCount()
         async function getCount() {
-            await fetch('https://backend.mgcounts.com/' + cid + '')
+            await fetch('https://api.mgcounts.com/' + cid + '')
             //await fetch('http://localhost:3333/' + cid + '')
                 .then(response => response.json())
                 .then(data => {
@@ -63,7 +63,7 @@ function stats2() {
         cid = res.split(`<meta itemprop="channelId" content="`)[1].split(`">`)[0]
         getCount()
         async function getCount() {
-            await fetch('https://backend.mgcounts.com/' + cid + '')
+            await fetch('https://api.mgcounts.com/' + cid + '')
             //await fetch('http://localhost:3333/' + cid + '')
                 .then(response => response.json()).catch(err => {
                     console.log(err)

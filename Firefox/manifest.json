@@ -24,8 +24,7 @@
         }
     ],
     "permissions": [
-        "https://backend.mgcounts.com/*",
-        "http://localhost/*",
+        "https://api.mgcounts.com/*",
         "http://localhost:3000/*"
     ]
 }
