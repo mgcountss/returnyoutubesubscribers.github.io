@@ -35,14 +35,14 @@ function stats() {
                                 document.querySelector("#subscriber-count").removeAttribute('is-empty')
                             }
                             if (data.verified == true) {
-                                document.querySelector("#subscriber-count").innerHTML = data.count.toLocaleString() + " subscribers <a style='color: #AAA;' href='https://nextcounts.com/unabbreviate/'>(Verified by NextCounts)</a>"
+                                document.querySelector("#subscriber-count").innerText = data.count.toLocaleString() + " subscribers " + data.by + ""
                                 document.querySelector("#subscriber-count").setAttribute("loaded", "true")
                             } else {
-                                document.querySelector("#subscriber-count").innerHTML = data.count.toLocaleString() + " subscribers"
+                                document.querySelector("#subscriber-count").innerText = data.count.toLocaleString() + " subscribers"
                                 document.querySelector("#subscriber-count").setAttribute("loaded", "true")
                             }
                         } else if (data.count == null) {
-                            document.querySelector("#subscriber-count").innerHTML = res.split(`,"subscriberCountText":{"accessibility":{"accessibilityData":{"label":"`)[1].split(' subscribers')[0] + " subscribers"
+                            document.querySelector("#subscriber-count").innerText = res.split(`,"subscriberCountText":{"accessibility":{"accessibilityData":{"label":"`)[1].split(' subscribers')[0] + " subscribers"
                             document.querySelector("#subscriber-count").setAttribute("loaded", "true")
                         }
                     }
@@ -54,33 +54,39 @@ function stats() {
 }
 
 function stats2() {
+    var currentURL = window.location.href;
     var req = new XMLHttpRequest();
     req.open('GET', currentURL, false);
     req.send(null);
     if (req.status == 200) {
         let res = req.responseText
-        cid = res.split(`<meta itemprop="channelId" content="`)[1].split(`">`)[0]
+        if (res.includes(`,{"key":"browse_id","value":"`)) {
+            cid = res.split(`,{"key":"browse_id","value":"`)[1].split(`"},`)[0]
+        } else if (res.includes(`"channelId":"`)) {
+            cid = res.split(`"channelId":"`)[1].split(`"`)[0]
+        } else {
+            cid = res.split(`"externalId":"`)[1].split(`"`)[0]
+        }
         getCount()
         async function getCount() {
             await fetch('https://api.mgcounts.com/' + cid + '')
-                .then(response => response.json()).catch(err => {
-                    console.log(err)
-                }).then(data => {
+                .then(response => response.json()).then(data => {
                     if (data) {
+                        console.log(data)
                         if (data.count == null) {
-                            document.querySelector("#owner-sub-count").innerHTML = "failed to load subscriber count"
+                            document.querySelector("#owner-sub-count").innerText = "failed to load subscriber count"
                             document.querySelector("#owner-sub-count").setAttribute("loaded", "true")
                         } else {
                             if (data.verified == true) {
-                                document.querySelector("#owner-sub-count").innerHTML = data.count.toLocaleString() + " subscribers <a style='color: #AAA;' href='https://nextcounts.com/unabbreviate/'>(Verified by NextCounts)</a>"
+                                document.querySelector("#owner-sub-count").innerText = data.count.toLocaleString() + " subscribers " + data.by + ""
                                 document.querySelector("#owner-sub-count").setAttribute("loaded", "true")
                             } else {
-                                document.querySelector("#owner-sub-count").innerHTML = data.count.toLocaleString() + " subscribers"
+                                document.querySelector("#owner-sub-count").innerText = data.count.toLocaleString() + " subscribers"
                                 document.querySelector("#owner-sub-count").setAttribute("loaded", "true")
                             }
-                            if (document.querySelector("#owner-sub-count").getAttribute('is-empty') == "") {
-                                document.querySelector("#owner-sub-count").removeAttribute('is-empty')
-                            }
+                        }
+                        if (document.querySelector("#owner-sub-count").getAttribute('is-empty') == "") {
+                            document.querySelector("#owner-sub-count").removeAttribute('is-empty')
                         }
                     }
                 }).catch(err => {
