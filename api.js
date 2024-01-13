@@ -1,4 +1,3 @@
-
 import express from 'express'
 import cors from 'cors'
 import axios from 'axios'
@@ -21,14 +20,15 @@ app.get('/:id', (req, res) => {
                     if (response.data.isStudio == true) {
                         res.status(200).send({ "success": true, "count": response.data.estSubCount, "verified": true, "by": "✓" });
                     } else {
-                        axios.get(process.env.yabap.replace('{channel}', req.params.id))
+                        axios.get(process.env.yabapi.replace('{channel}', req.params.id))
                             .then(response2 => {
                                 if ((response2) && (response2.data.statistics) && (response2.data.statistics.subscriberCount)) {
-                                    res.status(200).send({ "success": true, "count": response.data.statistics.subscriberCount, "verified": false, "by": "| yabcounts.com" });
+                                    res.status(200).send({ "success": true, "count": response2.data.statistics.subscriberCount, "verified": false, "by": "| yabcounts.com" });
                                 } else {
                                     res.status(200).send({ "success": true, "count": response.data.estSubCount, "verified": false, "by": "axern.space" });
                                 }
                             }).catch(err => {
+                                console.log(err)
                                 if (response.data.estSubCount) {
                                     res.status(200).send({ "success": true, "count": response.data.estSubCount, "verified": false, "by": "axern.space" });
                                 } else {
